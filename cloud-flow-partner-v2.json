@@ -255,7 +255,7 @@
 		}
 	},
 	"info": {
-		"title": "CloudFlow Partner API",
+		"title": "CloudFlow Partner API (v2)",
 		"version": "2.0",
 		"description": "CloudFlow partners can manage client accounts and devices.",
 		"contact": {}

@@ -323,7 +323,7 @@
 		}
 	},
 	"info": {
-		"title": "CloudFlow Client API",
+		"title": "CloudFlow Client API (v2)",
 		"version": "2.0",
 		"description": "CloudFlow enables clients to initiate online requests to a connected payment device.",
 		"contact": {}
