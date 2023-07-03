@@ -1,0 +1,837 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"WorkflowStatus": {
+				"description": "Possible list of statuses an onboarding request goes through",
+				"enum": [
+					"RECEIVED",
+					"PROCESSING",
+					"FAILED",
+					"SUCCEEDED"
+				],
+				"type": "string"
+			},
+			"FlowType": {
+				"description": "Supported flow types",
+				"enum": [
+					"onboard",
+					"modify",
+					"provision",
+					"no-op",
+					"healthcheck",
+					"create",
+					"update"
+				],
+				"type": "string"
+			},
+			"WorkflowStatusResponse": {
+				"description": "Represents the current status of a workflow.",
+				"properties": {
+					"workflowRequestId": {
+						"type": "string",
+						"description": "The id of the request that initiated this workflow"
+					},
+					"status": {
+						"$ref": "#/components/schemas/WorkflowStatus",
+						"description": "The current status of the workflow"
+					},
+					"lastUpdateDateTime": {
+						"type": "number",
+						"format": "double",
+						"description": "Timestamp (ms since epoch) for when the flow status was last updated"
+					},
+					"partnerId": {
+						"type": "string",
+						"description": "The partnerId that was used for the request"
+					},
+					"merchantAcquirerId": {
+						"type": "string",
+						"description": "The merchantAcquirerId, if any, that was used for the request"
+					},
+					"flowType": {
+						"$ref": "#/components/schemas/FlowType",
+						"description": "The flow type that represents the workflow"
+					},
+					"processedContextData": {
+						"properties": {},
+						"type": "object",
+						"description": "Any context data that has been processed"
+					}
+				},
+				"required": [
+					"workflowRequestId",
+					"status",
+					"lastUpdateDateTime",
+					"partnerId",
+					"flowType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiError": {
+				"properties": {
+					"errorCode": {
+						"type": "string"
+					},
+					"errorMessage": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"errorCode",
+					"errorMessage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Format": {
+				"description": "Supported request formats",
+				"enum": [
+					"aevi",
+					"apa",
+					"Apa"
+				],
+				"type": "string"
+			},
+			"ContactType": {
+				"description": "Contact type",
+				"enum": [
+					"firstname",
+					"lastname",
+					"telephone",
+					"email",
+					"website"
+				],
+				"type": "string"
+			},
+			"Contact": {
+				"description": "Represents a contact",
+				"properties": {
+					"type": {
+						"$ref": "#/components/schemas/ContactType",
+						"description": "The type of contact"
+					},
+					"description": {
+						"type": "string",
+						"description": "The contact description"
+					},
+					"value": {
+						"type": "string",
+						"description": "The contact value"
+					}
+				},
+				"required": [
+					"type",
+					"value"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AddressDetails": {
+				"description": "Represents an address",
+				"properties": {
+					"address1": {
+						"type": "string",
+						"description": "First line of address"
+					},
+					"address2": {
+						"type": "string",
+						"description": "Optional second line of address"
+					},
+					"city": {
+						"type": "string",
+						"description": "City"
+					},
+					"county": {
+						"type": "string",
+						"description": "County / state"
+					},
+					"postalCode": {
+						"type": "string",
+						"description": "Postal code"
+					},
+					"country": {
+						"type": "string",
+						"description": "Country"
+					},
+					"contacts": {
+						"items": {
+							"$ref": "#/components/schemas/Contact"
+						},
+						"type": "array",
+						"description": "List of contacts for this address"
+					}
+				},
+				"required": [
+					"address1",
+					"city",
+					"postalCode",
+					"country"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EntityStatus": {
+				"description": "Status that can be applied to any entity",
+				"enum": [
+					"active",
+					"inactive",
+					"deleted"
+				],
+				"type": "string"
+			},
+			"Terminal": {
+				"description": "Terminal/Device details",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "The id of the terminal\n\nThis may be the acquirer / merchant acquirer terminal reference"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the terminal"
+					},
+					"serialNumber": {
+						"type": "string",
+						"description": "The serial number of the terminal"
+					},
+					"model": {
+						"type": "string",
+						"description": "The terminal model"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EntityStatus",
+						"description": "The terminal status"
+					},
+					"country": {
+						"type": "string",
+						"description": "Country defined as ISO3166-1 two letter country code"
+					},
+					"supportedLanguages": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Supported languages defined as ISO639-1 two letter codes"
+					},
+					"defaultLanguage": {
+						"type": "string",
+						"description": "Default language defined as ISO639-1 two letter code"
+					},
+					"supportedCurrencies": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "Supported currencies defined as ISO4217 three letter currency codes"
+					},
+					"defaultCurrency": {
+						"type": "string",
+						"description": "Default currency defined as ISO4217 three letter currency code"
+					},
+					"timezone": {
+						"type": "string",
+						"description": "Timezone defined in TZ format (see https://www.iana.org/time-zones)"
+					},
+					"profile": {
+						"type": "string",
+						"description": "The terminal profile"
+					},
+					"parameters": {
+						"properties": {},
+						"additionalProperties": {},
+						"type": "object",
+						"description": "The terminal parameters"
+					}
+				},
+				"required": [
+					"id",
+					"status",
+					"profile"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MerchantLocation": {
+				"description": "Merchant physical/store/site location details",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "The id of the merchant location"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the merchant location"
+					},
+					"address": {
+						"$ref": "#/components/schemas/AddressDetails",
+						"description": "The address of the merchant location"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EntityStatus",
+						"description": "The status of the merchant location"
+					},
+					"parameters": {
+						"properties": {},
+						"additionalProperties": {},
+						"type": "object",
+						"description": "The merchant location parameters"
+					},
+					"receiptParameters": {
+						"properties": {},
+						"additionalProperties": {
+							"anyOf": [
+								{
+									"type": "string"
+								},
+								{
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							]
+						},
+						"type": "object",
+						"description": "The merchant location receipt parameters"
+					},
+					"terminals": {
+						"items": {
+							"$ref": "#/components/schemas/Terminal"
+						},
+						"type": "array",
+						"description": "The list of terminals at the merchant location"
+					},
+					"defaultLanguage": {
+						"type": "string",
+						"description": "Default language defined as ISO639-1 two letter code"
+					},
+					"timezone": {
+						"type": "string",
+						"description": "Timezone defined in TZ format (see https://www.iana.org/time-zones)"
+					}
+				},
+				"required": [
+					"id",
+					"status",
+					"terminals"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Merchant": {
+				"description": "Merchant details",
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "The id of the merchant"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the merchant"
+					},
+					"address": {
+						"$ref": "#/components/schemas/AddressDetails",
+						"description": "The address details of the merchant"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EntityStatus",
+						"description": "The merchant status"
+					},
+					"physicalLocations": {
+						"items": {
+							"$ref": "#/components/schemas/MerchantLocation"
+						},
+						"type": "array",
+						"description": "The physical locations/sites of the merchant"
+					},
+					"parameters": {
+						"properties": {},
+						"additionalProperties": {},
+						"type": "object",
+						"description": "Merchant parameters"
+					}
+				},
+				"required": [
+					"physicalLocations"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TerminalSerialNumber": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"serialNumber": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"serialNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ProvisionTerminals": {
+				"properties": {
+					"terminals": {
+						"items": {
+							"$ref": "#/components/schemas/TerminalSerialNumber"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"terminals"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"WorkflowClientRequest": {
+				"description": "A request to initiate a workflow.",
+				"properties": {
+					"partnerId": {
+						"type": "string",
+						"description": "The partnerId that this request is for"
+					},
+					"merchantAcquirerId": {
+						"type": "string",
+						"description": "The merchant acquirer id that this request is for, if any"
+					},
+					"requestGroupId": {
+						"type": "string",
+						"description": "An id to group requests by, if any"
+					},
+					"type": {
+						"$ref": "#/components/schemas/FlowType",
+						"description": "The type of flow to execute"
+					},
+					"format": {
+						"$ref": "#/components/schemas/Format",
+						"description": "The format of the contextData"
+					},
+					"contextData": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/Merchant"
+							},
+							{
+								"$ref": "#/components/schemas/ProvisionTerminals"
+							},
+							{
+								"properties": {},
+								"type": "object"
+							}
+						],
+						"description": "The request context data that is relevant for the flow requested.\n\nNote: The only supported context data types at this point are 'Merchant' and 'ProvisionTerminals. Merchant is used for 'onboard' and 'modify'; ProvisionTerminals is used for 'provision' flows."
+					}
+				},
+				"required": [
+					"partnerId",
+					"type",
+					"format"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OAuthPublicKey": {
+				"properties": {
+					"kty": {
+						"type": "string"
+					},
+					"use": {
+						"type": "string"
+					},
+					"kid": {
+						"type": "string"
+					},
+					"x5t": {
+						"type": "string"
+					},
+					"x5c": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"n": {
+						"type": "string"
+					},
+					"e": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"kty",
+					"use",
+					"kid",
+					"x5t",
+					"x5c"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConnectedServiceDirection": {
+				"enum": [
+					"to",
+					"from"
+				],
+				"type": "string"
+			},
+			"ConnectedService": {
+				"properties": {
+					"service": {
+						"type": "string",
+						"description": "The short name of a connected service"
+					},
+					"baseUrl": {
+						"type": "string",
+						"description": "The baseUrl of a connected service"
+					},
+					"direction": {
+						"$ref": "#/components/schemas/ConnectedServiceDirection"
+					}
+				},
+				"required": [
+					"service",
+					"baseUrl",
+					"direction"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Connect": {
+				"description": "Represents a connect service details.",
+				"properties": {
+					"service": {
+						"type": "string",
+						"description": "The short name of this connect service"
+					},
+					"version": {
+						"type": "string",
+						"description": "The version number, in semver v2 format."
+					},
+					"region": {
+						"type": "string",
+						"description": "The AWS region this service is operating in."
+					},
+					"stage": {
+						"type": "string",
+						"description": "The stage for this environment."
+					},
+					"urlPrefix": {
+						"type": "string",
+						"description": "The URL prefix used for this environment."
+					},
+					"scopes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"description": "The scopes this service uses"
+					},
+					"publicServiceKey": {
+						"$ref": "#/components/schemas/OAuthPublicKey",
+						"description": "The public key of this service. Used to connect, connect services together"
+					},
+					"parameters": {
+						"description": "Any service specific parameters that should be exposed"
+					},
+					"connections": {
+						"items": {
+							"$ref": "#/components/schemas/ConnectedService"
+						},
+						"type": "array",
+						"description": "A list of services that this service is connected to (has a trust relationship with)"
+					}
+				},
+				"required": [
+					"service",
+					"version",
+					"region",
+					"stage",
+					"urlPrefix"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"apiToken": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "base64({\"accountId\": \"Your user account id\", \"apiToken\": \"Your user account API token\"})"
+			}
+		}
+	},
+	"info": {
+		"title": "Connect Workflow Client API",
+		"version": "1",
+		"description": "Connect Workflow enables clients to initiate workflows to carry out specific tasks.",
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/initiate": {
+			"post": {
+				"operationId": "Initiate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/WorkflowStatusResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"417": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Initiate a new workflow.\n\nThe environment used must already be configured with the specified 'partnerId', 'merchantAcquirerId', 'type' and 'format'.\n\nThe format and content of the request is dependent on the type of flow being requested. Please see the AEVI developer portal\nfor more information.",
+				"tags": [
+					"workflow-endpoint"
+				],
+				"security": [
+					{
+						"apiToken": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The workflow request",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/WorkflowClientRequest",
+								"description": "The workflow request"
+							}
+						}
+					}
+				},
+				"x-deployment": {
+					"functionName": "workflowApi",
+					"authorizer": "authApiAuthorizer",
+					"validator": "bodyAndParams"
+				}
+			}
+		},
+		"/status/{workflowRequestId}": {
+			"get": {
+				"operationId": "GetWorkflowStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/WorkflowStatusResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieve the status of a previously initiated workflow.",
+				"tags": [
+					"workflow-endpoint"
+				],
+				"security": [
+					{
+						"apiToken": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The id of the workflow request previously initiated",
+						"in": "path",
+						"name": "workflowRequestId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"x-deployment": {
+					"functionName": "workflowApi",
+					"authorizer": "authApiAuthorizer",
+					"validator": "paramsOnly"
+				}
+			}
+		},
+		"/status/group/{workflowRequestGroupId}": {
+			"get": {
+				"operationId": "GetWorkflowStatusesForGroup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/WorkflowStatusResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Retrieve the statuses of a for a group of previously initiated workflows.",
+				"tags": [
+					"workflow-endpoint"
+				],
+				"security": [
+					{
+						"apiToken": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The request group id associated with the workflows",
+						"in": "path",
+						"name": "workflowRequestGroupId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"x-deployment": {
+					"functionName": "workflowApi",
+					"authorizer": "authApiAuthorizer",
+					"validator": "paramsOnly"
+				}
+			}
+		},
+		"/connect": {
+			"get": {
+				"operationId": "connect",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Connect"
+								}
+							}
+						}
+					}
+				},
+				"description": "Returns details of this workflow service.",
+				"tags": [
+					"workflow-endpoint"
+				],
+				"security": [],
+				"parameters": [],
+				"x-deployment": {
+					"functionName": "workflowApi",
+					"authorizer": "none",
+					"validator": "bodyAndParams"
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
