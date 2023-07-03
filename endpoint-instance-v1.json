@@ -572,9 +572,9 @@
 		}
 	},
 	"info": {
-		"title": "Connect Workflow Client API",
+		"title": "Endpoint Instance (v1)",
 		"version": "1",
-		"description": "Connect Workflow enables clients to initiate workflows to carry out specific tasks.",
+		"description": "Enables clients to initiate workflows to carry out specific tasks.",
 		"contact": {}
 	},
 	"openapi": "3.0.0",
