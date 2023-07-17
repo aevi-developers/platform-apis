@@ -1,0 +1,208 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"CredentialsConnectionType": {
+				"description": "The connection type. Supported values are: ['websocket'].",
+				"enum": [
+					"websocket"
+				],
+				"type": "string"
+			},
+			"CredentialsTokenType": {
+				"description": "The type of access token provided. Supported values are: ['jwt'].",
+				"enum": [
+					"jwt"
+				],
+				"type": "string"
+			},
+			"ConnectionCredentials": {
+				"description": "Represents connection credentials required to connect to CloudFlow.",
+				"properties": {
+					"connectionType": {
+						"$ref": "#/components/schemas/CredentialsConnectionType",
+						"description": "The connection type. Supported values are: ['websocket']."
+					},
+					"connectionUrl": {
+						"type": "string",
+						"description": "The websocket URL to connect to."
+					},
+					"tokenType": {
+						"$ref": "#/components/schemas/CredentialsTokenType",
+						"description": "The type of access token provided. Supported values are: ['jwt']."
+					},
+					"accessToken": {
+						"type": "string",
+						"description": "An access token to use for authentication when connecting to the websocket."
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiError": {
+				"properties": {
+					"errorCode": {
+						"type": "string"
+					},
+					"errorMessage": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"errorCode",
+					"errorMessage"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Version": {
+				"description": "Represents CloudFlow versions.",
+				"properties": {
+					"cloudFlowVersion": {
+						"type": "string",
+						"description": "The version of CloudFlow itself, in semver v2 format."
+					},
+					"messageSpecificationVersion": {
+						"type": "string",
+						"description": "The message specification version, in partial semver v2 format (major.minor)."
+					}
+				},
+				"required": [
+					"cloudFlowVersion",
+					"messageSpecificationVersion"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"apiToken": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "base64({\"referenceId\": \"Device reference identifier\", \"apiToken\": \"Device API token\"})"
+			}
+		}
+	},
+	"info": {
+		"title": "CloudFlow Device API",
+		"version": "2.0",
+		"description": "CloudFlow enables devices to receive requests from a connected client.",
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/devices/enrol": {
+			"get": {
+				"operationId": "deviceEnrol",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConnectionCredentials"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					},
+					"412": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Enrols a device for communication via websockets.\n\nThis returns the relevant details for connecting and authenticating a websocket against CloudFlow.",
+				"tags": [
+					"device-endpoint"
+				],
+				"security": [
+					{
+						"deviceApiToken": []
+					}
+				],
+				"parameters": [],
+				"x-deployment": {
+					"functionName": "deviceApi",
+					"authorizer": "deviceAuthorizer",
+					"validator": "bodyAndParams"
+				}
+			}
+		},
+		"/devices/version": {
+			"get": {
+				"operationId": "deviceGetMessageVersion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Version"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Returns the version details for this instance.",
+				"tags": [
+					"device-endpoint"
+				],
+				"security": [
+					{
+						"apiToken": []
+					}
+				],
+				"parameters": [],
+				"x-deployment": {
+					"functionName": "deviceApi",
+					"authorizer": "deviceAuthorizer",
+					"validator": "bodyAndParams"
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
